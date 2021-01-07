@@ -65,10 +65,10 @@ ngx_pushQueue_module is used to add HTTP request information to rabitMQ queue or
         "mqType": "rabbitMQ",
         "uri": "/hello_world/",
         "method": "GET",
-	    "time": 1609992360,
-	    "ip": "118.113.14.162",
-	    "query": "id=123&test=123&name=123",
+	"time": 1609992360,
+	"ip": "118.113.14.162",
+	"query": "id=123&test=123&name=123",
         "queryLen": 24,
-	    "content": ""
+	"content": ""
     }
 </pre>
