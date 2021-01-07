@@ -1,0 +1,2 @@
+# ngx_pushQueue_module
+Nginx模块，可在访问Nginx时，将HTTP请求信息加入到指定RabbitMQ队列或Redis list结构中
