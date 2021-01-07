@@ -8,6 +8,7 @@ ngx_pushQueue_module is used to add HTTP request information to rabitMQ queue or
 <h2>使用方法</h2>
 <h3>1.将HTTP请求加入Redis List</h3>
 <code>
+    
     server{
     
        ...
