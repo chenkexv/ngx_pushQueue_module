@@ -367,8 +367,6 @@ static ngx_int_t ngx_pushQueue_createRequest(ngx_http_request_t *r){
     memset(command,0,needLen);
     sprintf(command,"*3\r\n$5\r\nrpush\r\n$%ld\r\n%s\r\n$%ld\r\n%s\r\n",strlen(key),key,strlen(putData),putData);
 
-    //ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"%s=========>putData:%s",key,command);
-
     int commandLen = strlen(command);
     b = ngx_create_temp_buf(r->pool,commandLen);  
     b->last = b->pos + commandLen;
@@ -807,14 +805,10 @@ static void pushMessageToRabbit(ngx_http_request_t *r){
        return;
    }
 
-   ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"push message to rabb data: %s","12331");
-
    //生成保存参数
    char *putData = NULL;
    putData = getMessageContent(r);
   
-    ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"push message to rabb data: %s",putData); 
- 
    u_char                   *msg;
    amqp_basic_properties_t  props;
    msg = ngx_pcalloc(r->pool, 32768);
@@ -847,7 +841,7 @@ static void pushMessageToRabbit(ngx_http_request_t *r){
 
    free(putData);
    showSuccessMessage(r,"{}");
-
+   ngx_http_finalize_request(r, ngx_http_send_header(r));
 }
 
 static ngx_int_t ngx_pushQueue_handler(ngx_http_request_t *r) {
