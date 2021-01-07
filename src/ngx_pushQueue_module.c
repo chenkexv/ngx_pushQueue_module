@@ -676,20 +676,26 @@ static char *getMessageContent(ngx_http_request_t *r){
 
       size_t len = atoi((const char *)r->headers_in.content_length->value.data);
       char *postData = malloc(len+10);
+
       putData = malloc(len+1024+strlen(queryParams));
       memset(postData, 0, len+10);
       size_t slen = 0;
       ngx_chain_t *bufs = r->request_body->bufs;
+
       while(bufs)
       {
          ngx_buf_t *buf = bufs->buf;
          char *thisString = malloc(buf->last - buf->pos + 1);
          memcpy(thisString,buf->pos,buf->last - buf->pos);
+ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"push message to rabb data: content-lent %s",thisString);
          sprintf(postData,"%s%s",postData,thisString);
          free(thisString);
          slen += (buf->last - buf->pos);
          bufs = bufs->next;
       }
+
+      ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"push message to rabb data: content-lent %s",postData);
+
       sprintf(putData, "{\"time\":%ld,\"ip\":\"%s\",\"query\":\"%s\",\"content\":\"%s\",\"method\":\"%s\",\"uri\":\"%s\",\"queryLen\":%ld,\"mqType\":\"%s\"}",now,ip,queryParams,postData,requestMethod,uri,strlen(queryParams),myType);
       free(postData);
     }
@@ -801,10 +807,13 @@ static void pushMessageToRabbit(ngx_http_request_t *r){
        return;
    }
 
+   ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"push message to rabb data: %s","12331");
+
    //生成保存参数
    char *putData = NULL;
    putData = getMessageContent(r);
-   
+  
+    ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"push message to rabb data: %s",putData); 
  
    u_char                   *msg;
    amqp_basic_properties_t  props;
@@ -864,8 +873,11 @@ static ngx_int_t ngx_pushQueue_handler(ngx_http_request_t *r) {
     memcpy(mqType,rlcf->mqType.data,rlcf->mqType.len);
 
     if(strcmp(mqType,"rabbitMQ") == 0){
-       pushMessageToRabbit(r);
-       return NGX_OK;
+       rc = ngx_http_read_client_request_body(r, pushMessageToRabbit);
+       if (rc >= NGX_HTTP_SPECIAL_RESPONSE) {
+          return rc;
+       }
+       return NGX_DONE;
     }
  
 
