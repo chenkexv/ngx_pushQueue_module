@@ -72,3 +72,11 @@ ngx_pushQueue_module is used to add HTTP request information to rabitMQ queue or
 	"content": ""
     }
 </pre>
+mqType：存储队列类型，[redis|rabbitMQ]
+uri:此消息对应请求的URI
+method：请求方式 [GET/POST/PUT/HEAD]
+time:请求时间，10位时间戳
+ip:此请求连接方IP，如果请求经过反向代理或其他转发，此IP可能不能代表用户真实IP
+query：请求URL中的参数
+queryLen：URL参数长度
+content：POST请求时，此字段代表POST的数据内容
