@@ -4,6 +4,7 @@ ngx_pushQueue_module is used to add HTTP request information to rabitMQ queue or
 
 <h2>外部库依赖</h2>
 <p>需安装<a href="https://github.com/alanxz/rabbitmq-c">rabbitmq-c库</a>方可编译此扩展</p>
+<p>安装后启动nginx若提示找不到rabbitmq.so 可执行 ldd $(which /usr/local/nginx/sbin/nginx) 查看nginx加载的lib目录，移动一份到对应的目录<p>
 
 <h2>使用方法</h2>
 <h3>将HTTP请求加入Redis List</h3>
