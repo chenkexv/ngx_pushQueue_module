@@ -1,2 +1,2 @@
 # ngx_pushQueue_module
-Nginx模块，可在访问Nginx时，将HTTP请求信息加入到指定RabbitMQ队列或Redis list结构中
+ngx_pushQueue_module is used to add HTTP request information to rabitMQ queue or redis list during HTTP request.
