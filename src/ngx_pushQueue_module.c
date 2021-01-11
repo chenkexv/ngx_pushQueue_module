@@ -680,20 +680,23 @@ static char *getMessageContent(ngx_http_request_t *r){
     }else{
 
       size_t len = atoi((const char *)r->headers_in.content_length->value.data);
-      char *postData = malloc(len+10);
+      char *postData = malloc(len+1);
 
       putData = malloc(len+1024+strlen(queryParams));
       memset(putData,0,len+1024+strlen(queryParams));
-      memset(postData, 0, len+10);
+      memset(postData, 0, len+1);
       size_t slen = 0;
       ngx_chain_t *bufs = r->request_body->bufs;
 
       while(bufs)
       {
          ngx_buf_t *buf = bufs->buf;
-         char *thisString = malloc(buf->last - buf->pos + 1);
-         memcpy(thisString,buf->pos,buf->last - buf->pos);
-         sprintf(postData,"%s%s",postData,thisString);
+         int tempLen = buf->last - buf->pos;
+         char *thisString = malloc(tempLen+1);
+         memset(thisString,0,tempLen+1);
+         memcpy(thisString,buf->pos,tempLen);
+         //sprintf(postData,"%s|-|%s",postData,thisString);
+         strncat(postData,thisString,strlen(thisString));
          free(thisString);
          slen += (buf->last - buf->pos);
          bufs = bufs->next;
