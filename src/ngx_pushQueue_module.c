@@ -365,6 +365,7 @@ static ngx_int_t ngx_pushQueue_createRequest(ngx_http_request_t *r){
     int needLen = strlen(putData) + 128;
     char *command = malloc(needLen);
     memset(command,0,needLen);
+
     sprintf(command,"*3\r\n$5\r\nrpush\r\n$%ld\r\n%s\r\n$%ld\r\n%s\r\n",strlen(key),key,strlen(putData),putData);
 
     int commandLen = strlen(command);
@@ -669,6 +670,7 @@ static char *getMessageContent(ngx_http_request_t *r){
     if (NULL == r->headers_in.content_length || 0 == atoi((const char *)r->headers_in.content_length->value.data))
     {
           putData = malloc(strlen(queryParams) + 1024);
+          memset(putData,0,strlen(queryParams) + 1024);
           sprintf(putData, "{\"time\":%ld,\"ip\":\"%s\",\"query\":\"%s\",\"content\":\"\",\"method\":\"%s\",\"uri\":\"%s\",\"queryLen\":%ld,\"mqType\":\"%s\"}",now,ip,queryParams,requestMethod,uri,strlen(queryParams),myType);
     }else{
 
@@ -676,6 +678,7 @@ static char *getMessageContent(ngx_http_request_t *r){
       char *postData = malloc(len+10);
 
       putData = malloc(len+1024+strlen(queryParams));
+      memset(putData,0,len+1024+strlen(queryParams));
       memset(postData, 0, len+10);
       size_t slen = 0;
       ngx_chain_t *bufs = r->request_body->bufs;
@@ -685,14 +688,12 @@ static char *getMessageContent(ngx_http_request_t *r){
          ngx_buf_t *buf = bufs->buf;
          char *thisString = malloc(buf->last - buf->pos + 1);
          memcpy(thisString,buf->pos,buf->last - buf->pos);
-ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"push message to rabb data: content-lent %s",thisString);
          sprintf(postData,"%s%s",postData,thisString);
          free(thisString);
          slen += (buf->last - buf->pos);
          bufs = bufs->next;
       }
 
-      ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"push message to rabb data: content-lent %s",postData);
 
       sprintf(putData, "{\"time\":%ld,\"ip\":\"%s\",\"query\":\"%s\",\"content\":\"%s\",\"method\":\"%s\",\"uri\":\"%s\",\"queryLen\":%ld,\"mqType\":\"%s\"}",now,ip,queryParams,postData,requestMethod,uri,strlen(queryParams),myType);
       free(postData);
