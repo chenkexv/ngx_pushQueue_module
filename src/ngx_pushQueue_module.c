@@ -444,6 +444,8 @@ static ngx_int_t ngx_pushQueue_processHeader(ngx_http_request_t *r)
 
     u = r->upstream;
     b = &u->buffer;
+	
+	ngx_str_set(&r->headers_out.content_type, "text/html" );
 
     if (b->last - b->pos < (ssize_t) sizeof(u_char)) {
         return NGX_AGAIN;
