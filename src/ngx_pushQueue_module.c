@@ -941,7 +941,7 @@ static ngx_int_t ngx_pushQueue_handler(ngx_http_request_t *r) {
 static void ngx_pushQueue_exitProcess(ngx_cycle_t* cycle){
 
      ngx_pushQueue_loc_conf_t *config=(ngx_pushQueue_loc_conf_t*)ngx_get_conf(cycle->conf_ctx, ngx_pushQueue_module);
-     if(config->rabbitConn != NULL){
+     if(config != NULL && config->rabbitConn != NULL){
          amqp_channel_close(config->rabbitConn, 1, AMQP_REPLY_SUCCESS);
          amqp_connection_close(config->rabbitConn, AMQP_REPLY_SUCCESS);
          amqp_destroy_connection(config->rabbitConn);
