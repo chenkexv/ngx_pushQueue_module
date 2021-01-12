@@ -876,6 +876,7 @@ static ngx_int_t ngx_pushQueue_handler(ngx_http_request_t *r) {
     memcpy(mqType,rlcf->mqType.data,rlcf->mqType.len);
 
     if(strcmp(mqType,"rabbitMQ") == 0){
+       r->upstream = NULL;
        rc = ngx_http_read_client_request_body(r, pushMessageToRabbit);
        if (rc >= NGX_HTTP_SPECIAL_RESPONSE) {
           return rc;
