@@ -409,10 +409,8 @@ static ngx_int_t ngx_pushQueue_processReply(ngx_pushQueue_ctx_t *ctx, ssize_t by
     ngx_http_upstream_t      *u;
 
     u = ctx->request->upstream;
-    u->keepalive = 1;
+    //u->keepalive = 1;
     u->length = 0;
-    u->headers_in.status_n = NGX_HTTP_OK;
-    u->state->status = NGX_HTTP_OK;
     showSuccessMessage(ctx->request,"{}");   
  
     return NGX_OK;
@@ -445,7 +443,9 @@ static ngx_int_t ngx_pushQueue_processHeader(ngx_http_request_t *r)
     u = r->upstream;
     b = &u->buffer;
 	
-	ngx_str_set(&r->headers_out.content_type, "text/html" );
+    ngx_str_set(&r->headers_out.content_type, "text/html" );
+    u->headers_in.status_n = NGX_HTTP_OK;
+    u->state->status = NGX_HTTP_OK;
 
     if (b->last - b->pos < (ssize_t) sizeof(u_char)) {
         return NGX_AGAIN;
@@ -604,7 +604,7 @@ static ngx_int_t showErrorMessage(ngx_http_request_t *r,int type){
     b->memory = 1;
     b->last_buf = 1;
 
-    //ngx_str_set( &r->headers_out.content_type, "text/html" );
+    ngx_str_set( &r->headers_out.content_type, "text/html" );
     r->headers_out.status = NGX_HTTP_OK;
     r->headers_out.content_length_n = content_length;
     rc = ngx_http_send_header( r );   
@@ -635,7 +635,7 @@ static ngx_int_t showSuccessMessage(ngx_http_request_t *r,char *message){
     b->last = output + content_length;
     b->memory = 1;
     b->last_buf = 1;
-    //ngx_str_set( &r->headers_out.content_type, "text/html" );
+    ngx_str_set( &r->headers_out.content_type, "text/html" );
     r->headers_out.status = NGX_HTTP_OK;
     r->headers_out.content_length_n = content_length;
     ngx_http_send_header(r);
@@ -864,13 +864,6 @@ static ngx_int_t ngx_pushQueue_handler(ngx_http_request_t *r) {
     ngx_str_t                        target;
     ngx_url_t                        url;
 
-
-    if (ngx_http_upstream_create(r) != NGX_OK) {
-        return NGX_HTTP_INTERNAL_SERVER_ERROR;
-    }
-
-    u = r->upstream;
-
     rlcf = ngx_http_get_module_loc_conf(r, ngx_pushQueue_module);
 
 
@@ -885,7 +878,12 @@ static ngx_int_t ngx_pushQueue_handler(ngx_http_request_t *r) {
        }
        return NGX_DONE;
     }
- 
+	
+	if (ngx_http_upstream_create(r) != NGX_OK) {
+        return NGX_HTTP_INTERNAL_SERVER_ERROR;
+    }
+
+    u = r->upstream;
 
     if (rlcf->host) {
         if (ngx_http_complex_value(r, rlcf->host, &target) != NGX_OK){
