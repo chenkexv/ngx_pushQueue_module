@@ -662,10 +662,7 @@ static char *getMessageContent(ngx_http_request_t *r){
 
     char myType[128] = {0};
     memcpy(myType,config->mqType.data,config->mqType.len);
-
-    char ua[512] = {0};
-    memcpy(ua,r->headers_in.user_agent->value.data,r->headers_in.user_agent->value.len); 
-
+	
     char key[128] = {0};
     memcpy(key,config->key.data,config->key.len);
 
