@@ -663,6 +663,9 @@ static char *getMessageContent(ngx_http_request_t *r){
     char myType[128] = {0};
     memcpy(myType,config->mqType.data,config->mqType.len);
 
+    char ua[512];
+    memcpy(ua,r->headers_in.user_agent->value.data,r->headers_in.user_agent->value.len); 
+
     char key[128] = {0};
     memcpy(key,config->key.data,config->key.len);
 
@@ -676,16 +679,16 @@ static char *getMessageContent(ngx_http_request_t *r){
 
     if (NULL == r->headers_in.content_length || 0 == atoi((const char *)r->headers_in.content_length->value.data))
     {
-          putData = malloc(strlen(queryParams) + 1024);
-          memset(putData,0,strlen(queryParams) + 1024);
-          sprintf(putData, "{\"time\":%ld,\"ip\":\"%s\",\"query\":\"%s\",\"content\":\"\",\"method\":\"%s\",\"uri\":\"%s\",\"queryLen\":%ld,\"mqType\":\"%s\"}",now,ip,queryParams,requestMethod,uri,strlen(queryParams),myType);
+          putData = malloc(strlen(queryParams) + 1424);
+          memset(putData,0,strlen(queryParams) + 1424);
+          sprintf(putData, "{\"time\":%ld,\"ip\":\"%s\",\"query\":\"%s\",\"content\":\"\",\"method\":\"%s\",\"uri\":\"%s\",\"queryLen\":%ld,\"mqType\":\"%s\",\"ua\":\"%s\"}",now,ip,queryParams,requestMethod,uri,strlen(queryParams),myType,ua);
     }else{
 
       size_t len = atoi((const char *)r->headers_in.content_length->value.data);
       char *postData = malloc(len+1);
 
-      putData = malloc(len+1024+strlen(queryParams));
-      memset(putData,0,len+1024+strlen(queryParams));
+      putData = malloc(len+1424+strlen(queryParams));
+      memset(putData,0,len+1424+strlen(queryParams));
       memset(postData, 0, len+1);
       size_t slen = 0;
       ngx_chain_t *bufs = r->request_body->bufs;
@@ -705,7 +708,7 @@ static char *getMessageContent(ngx_http_request_t *r){
       }
 
 
-      sprintf(putData, "{\"time\":%ld,\"ip\":\"%s\",\"query\":\"%s\",\"content\":\"%s\",\"method\":\"%s\",\"uri\":\"%s\",\"queryLen\":%ld,\"mqType\":\"%s\"}",now,ip,queryParams,postData,requestMethod,uri,strlen(queryParams),myType);
+      sprintf(putData, "{\"time\":%ld,\"ip\":\"%s\",\"query\":\"%s\",\"content\":\"%s\",\"method\":\"%s\",\"uri\":\"%s\",\"queryLen\":%ld,\"mqType\":\"%s\",\"ua\":\"%s\"}",now,ip,queryParams,postData,requestMethod,uri,strlen(queryParams),myType,ua);
       free(postData);
     }
 
