@@ -678,7 +678,7 @@ static char *getMessageContent(ngx_http_request_t *r){
     {
           putData = malloc(strlen(queryParams) + 1424);
           memset(putData,0,strlen(queryParams) + 1424);
-          sprintf(putData, "{\"time\":%ld,\"ip\":\"%s\",\"query\":\"%s\",\"content\":\"\",\"method\":\"%s\",\"uri\":\"%s\",\"queryLen\":%ld,\"mqType\":\"%s\",\"ua\":\"%s\"}",now,ip,queryParams,requestMethod,uri,strlen(queryParams),myType,ua);
+          sprintf(putData, "{\"time\":%ld,\"ip\":\"%s\",\"query\":\"%s\",\"content\":\"\",\"method\":\"%s\",\"uri\":\"%s\",\"queryLen\":%ld,\"mqType\":\"%s\"}",now,ip,queryParams,requestMethod,uri,strlen(queryParams),myType);
     }else{
 
       size_t len = atoi((const char *)r->headers_in.content_length->value.data);
@@ -705,7 +705,7 @@ static char *getMessageContent(ngx_http_request_t *r){
       }
 
 
-      sprintf(putData, "{\"time\":%ld,\"ip\":\"%s\",\"query\":\"%s\",\"content\":\"%s\",\"method\":\"%s\",\"uri\":\"%s\",\"queryLen\":%ld,\"mqType\":\"%s\",\"ua\":\"%s\"}",now,ip,queryParams,postData,requestMethod,uri,strlen(queryParams),myType,ua);
+      sprintf(putData, "{\"time\":%ld,\"ip\":\"%s\",\"query\":\"%s\",\"content\":\"%s\",\"method\":\"%s\",\"uri\":\"%s\",\"queryLen\":%ld,\"mqType\":\"%s\"}",now,ip,queryParams,postData,requestMethod,uri,strlen(queryParams),myType);
       free(postData);
     }
 
