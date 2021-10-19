@@ -359,11 +359,11 @@ static ngx_int_t ngx_pushQueue_createRequest(ngx_http_request_t *r){
     char *putData = NULL;
     putData = getMessageContent(r);
 
-    char key[100] = {0};
+    char *key = malloc(1024);
     memcpy(key,config->key.data,config->key.len);
 	
-	if(config->key.len > 100){
-		return NGX_ERROR;
+    if(config->key.len > 100){
+        return NGX_ERROR;
 	}
 
     int needLen = strlen(putData) + 150;
@@ -380,6 +380,7 @@ static ngx_int_t ngx_pushQueue_createRequest(ngx_http_request_t *r){
 
     free(putData);
     free(command);
+	free(key);
 
     cl = ngx_alloc_chain_link(r->pool);
     if (cl == NULL) {
