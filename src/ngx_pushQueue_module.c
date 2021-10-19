@@ -353,16 +353,15 @@ static ngx_int_t ngx_pushQueue_createRequest(ngx_http_request_t *r){
     ngx_buf_t                       *b;
     ngx_chain_t                     *cl;
 
-    ngx_pushQueue_loc_conf_t      *config;
+    ngx_pushQueue_loc_conf_t		*config;
     config = ngx_http_get_module_loc_conf(r,ngx_pushQueue_module);
 
     char *putData = NULL;
     putData = getMessageContent(r);
-
-    char *key = malloc(1024);
+    char *key = malloc(config->key.len + 1);
     memcpy(key,config->key.data,config->key.len);
 	
-    if(config->key.len > 100){
+    if(config->key.len > 1024){
         return NGX_ERROR;
 	}
 
@@ -375,23 +374,20 @@ static ngx_int_t ngx_pushQueue_createRequest(ngx_http_request_t *r){
     int commandLen = strlen(command)+1;
     b = ngx_create_temp_buf(r->pool,commandLen);  
     b->last = b->pos + commandLen;
-    //ngx_snprintf(b->pos,commandLen,command,&r->args);  
 	ngx_memcpy(b->pos, command, commandLen);  
 
     free(putData);
     free(command);
 	free(key);
 
+
     cl = ngx_alloc_chain_link(r->pool);
     if (cl == NULL) {
         return NGX_ERROR;
     }
-
     cl->buf = b;
     cl->next = NULL;
-
     r->upstream->request_bufs = cl;
-
     return NGX_OK;
 
 }
