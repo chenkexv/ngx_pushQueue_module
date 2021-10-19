@@ -651,7 +651,7 @@ static char *getMessageContent(ngx_http_request_t *r){
 
     config = ngx_http_get_module_loc_conf(r, ngx_pushQueue_module);   
 
-    char queryParams[10240] = {0};
+    char *queryParams = malloc(r->args.len+1);
     memcpy(queryParams, r->args.data, r->args.len);
 
     char *requestMethod = malloc(20);
@@ -709,6 +709,7 @@ static char *getMessageContent(ngx_http_request_t *r){
       free(postData);
     }
 
+	free(queryParams);
     free(requestMethod);
     return putData;
 }
